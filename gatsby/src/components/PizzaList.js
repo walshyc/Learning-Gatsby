@@ -1,25 +1,48 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import Img from 'gatsby-image';
+import styled from 'styled-components';
+
+const PizzaGridStyles = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 4rem;
+  grid-auto-rows: auto auto 500px;
+`;
+
+const PizzaStyles = styled.div`
+  display: grid;
+  /* Take row sizing not from pizzaStyles div, but from the PizzaGridStyles grid */
+  @supports not (grid-template-rows: subgrid) {
+    grid-template-rows: auto auto 1fr;
+  }
+  grid-template-rows: subgrid;
+  grid-row: span 3;
+  grid-gap: 1rem;
+  h2,
+  p {
+    margain: 0;
+  }
+`;
 
 const SinglePizza = ({ pizza }) => (
-  <div>
+  <PizzaStyles>
     <Link to={`/pizza/${pizza.slug.current}`}>
       <h2>
         <span className="mark">{pizza.name}</span>
       </h2>
-      <p>{pizza.toppings.map((t) => t.name).join(', ')}</p>
-      <Img fluid={pizza.image.asset.fluid} alt={pizza.name} />
     </Link>
-  </div>
+    <p>{pizza.toppings.map((t) => t.name).join(', ')}</p>
+    <Img fluid={pizza.image.asset.fluid} alt={pizza.name} />
+  </PizzaStyles>
 );
 
 const PizzaList = ({ pizzas }) => (
-  <div>
+  <PizzaGridStyles>
     {pizzas.map((p) => (
       <SinglePizza key={p.id} pizza={p} />
     ))}
-  </div>
+  </PizzaGridStyles>
 );
 
 export default PizzaList;
