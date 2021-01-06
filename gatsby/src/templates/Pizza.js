@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql } from 'gatsby';
 import Img from 'gatsby-image';
 import styled from 'styled-components';
+import SEO from '../components/SEO';
 
 const PizzaGrid = styled.div`
   display: grid;
@@ -12,17 +13,20 @@ const PizzaGrid = styled.div`
 export default function SinglePizzaPage({ data }) {
   const { pizza } = data;
   return (
-    <PizzaGrid className="">
-      <Img fluid={pizza.image.asset.fluid} />
-      <div className="">
-        <h2 className="mark">{pizza.name}</h2>
-        <ul>
-          {pizza.toppings.map((t) => (
-            <li key={t.id}>{t.name}</li>
-          ))}
-        </ul>
-      </div>
-    </PizzaGrid>
+    <>
+      <SEO title={pizza.name} image={pizza.image?.asset?.fluid?.src} />
+      <PizzaGrid className="">
+        <Img fluid={pizza.image.asset.fluid} />
+        <div className="">
+          <h2 className="mark">{pizza.name}</h2>
+          <ul>
+            {pizza.toppings.map((t) => (
+              <li key={t.id}>{t.name}</li>
+            ))}
+          </ul>
+        </div>
+      </PizzaGrid>
+    </>
   );
 }
 
