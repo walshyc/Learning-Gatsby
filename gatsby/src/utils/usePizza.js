@@ -30,6 +30,7 @@ export default function usePizza({ pizzas, values }) {
       total: calculateOrderTotal(order, pizzas),
       name: values.name,
       email: values.email,
+      maple: values.maple,
     };
 
     const res = await fetch(

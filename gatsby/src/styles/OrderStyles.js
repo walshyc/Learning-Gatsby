@@ -16,6 +16,10 @@ const OrderStyles = styled.form`
     }
   }
 
+  .maple {
+    display: none;
+  }
+
   @media (max-width: 900px) {
     fieldset.menu,
     fieldset.order {
