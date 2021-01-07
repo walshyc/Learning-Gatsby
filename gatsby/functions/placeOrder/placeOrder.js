@@ -1,5 +1,30 @@
 const nodemailer = require('nodemailer');
 
+function generateOrderEmail({ order, total }) {
+  return `
+  <div>
+  <h2>Your Recent Order for ${total}</h2>
+  <p>Please start walking over, we will have your order ready in the next 20 mins.</p>
+  <ul>
+    ${order
+      .map(
+        (item) => `<li>
+                    <img src = "${item.thumbnail}" alt="${item.name}"/>
+                    ${item.size} ${item.name} - ${item.price}
+                  </li>`
+      )
+      .join('')}
+  </ul>
+  <p>Your total is <strong>${total}</strong> due at pickup</p>
+  </div>
+  <style>
+  ul {
+    list-style: none;
+  }
+  </style>
+  `;
+}
+
 // create a transport for nodemailer
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
@@ -10,14 +35,46 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const wait = (ms) =>
+  new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+
 exports.handler = async (event, context) => {
-  // Test send an email
+  const body = JSON.parse(event.body);
+  // validate the data coming in is correct
+  const requiredFields = ['email', 'name', 'order'];
+  for (const field of requiredFields) {
+    if (!body[field]) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: `Oops you are missing the ${field} field!`,
+        }),
+      };
+    }
+  }
+  // make sure an order has items
+
+  if (!body.order.length) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: `Why would you order nothing?!`,
+      }),
+    };
+  }
+
+  // send the email
   const info = await transporter.sendMail({
     from: 'Slicks Slices <slick@example.com>',
-    to: 'conorwalsh0703@gmail.com',
+    to: `${body.name} <${body.email}>, conorwalsh0703@gmail.com`,
     subject: 'New Order!',
-    html: `<p>Your new order is here</p>`,
+    html: generateOrderEmail({ order: body.order, total: body.total }),
   });
-  console.log(info);
-  return { statusCode: 200, body: JSON.stringify(info) };
+
+  // send the success or error message
+
+  // Test send an email
+  return { statusCode: 200, body: JSON.stringify({ message: 'Success' }) };
 };

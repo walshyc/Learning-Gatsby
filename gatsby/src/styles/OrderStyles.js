@@ -16,12 +16,12 @@ const OrderStyles = styled.form`
     }
   }
 
-  /* @media (max-width: 900px) {
+  @media (max-width: 900px) {
     fieldset.menu,
     fieldset.order {
       grid-column: span 2;
     }
-  } */
+  }
 `;
 
 export default OrderStyles;
